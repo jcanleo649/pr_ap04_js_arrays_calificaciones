@@ -106,18 +106,26 @@ init();
 function agregarNota() {
 
   // TODO: leer el valor del input
-    const valor = notaInput.value;
   // TODO: convertirlo a número
-    Number(valor);
+    const valorNum = Number(notaInput.value);
   // TODO: validar que sea un número válido y esté entre 0 y 10
-    if (valor = "NaN"){
-        mensaje.innerHTML = ``
+    if (Number.isNaN(valorNum)){
+      mostrarMensaje("ERROR: El dato que has introducido es inválido");
+      // TODO: si hay error, mostrar mensaje y salir
+      return;
     }
-
-  // TODO: si hay error, mostrar mensaje y salir
-  // TODO: si es correcto, hacer push al array "notas"
-  // TODO: limpiar el input y devolver el foco al input
-  // TODO: llamar a render()
+    if (valorNum < 0 || valorNum > 10) {
+      mostrarMensaje("ERROR: Debes introducir un número que este entre 0 y 10")
+      return;
+    } else {
+      // TODO: si es correcto, hacer push al array "notas"
+      notas.push(valorNum);
+      // TODO: limpiar el input y devolver el foco al input
+      notaInput.value = "";
+      notaInput.focus();
+      // TODO: llamar a render()
+      render();
+    }
 }
 
 /**
@@ -126,7 +134,9 @@ function agregarNota() {
  */
 function ordenarAsc() {
   // TODO: ordenar el array de menor a mayor (recuerda que sort necesita comparador numérico)
+  notas.sort((a, b) => (a - b));
   // TODO: llamar a render()
+  render();
 }
 
 /**
@@ -135,7 +145,9 @@ function ordenarAsc() {
  */
 function ordenarDesc() {
   // TODO: ordenar el array de mayor a menor
+  notas.sort((a, b) => (b - a));
   // TODO: llamar a render()
+  render();
 }
 
 /**
@@ -144,7 +156,9 @@ function ordenarDesc() {
  */
 function limpiarTodo() {
   // TODO: vaciar el array de notas
+  notas.length = 0;
   // TODO: llamar a render()
+  render();
 }
 
 
@@ -160,7 +174,9 @@ function limpiarTodo() {
  */
 function render() {
   // TODO: llamar a pintarLista()
+  pintarLista();
   // TODO: llamar a pintarResumen()
+  pintarResumen();
 }
 
 /**
@@ -169,8 +185,16 @@ function render() {
  */
 function pintarLista() {
   // TODO: vaciar listaNotas (innerHTML)
+  listaNotas.innerHTML = "";
   // TODO: recorrer "notas" y crear un <li> por cada nota
-  // TODO: añadir cada <li> al <ul>
+  for (let i = 0; i < notas.length; i++) {
+    const nota = notas[i];
+    const li = document.createElement("li");
+    li.textContent = nota;
+    // TODO: añadir cada <li> al <ul>
+    listaNotas.appendChild(li);
+  }
+  
 }
 
 /**
@@ -185,8 +209,21 @@ function pintarLista() {
  */
 function pintarResumen() {
   // TODO: si no hay notas, mostrar "Aún no hay notas."
-  // TODO: si hay notas, calcular todos los valores (media, max, min, etc.)
+  if (notas.length === 0) {
+    mostrarMensaje("Aún no hay notas");
+    return;
+  } else { // TODO: si hay notas, calcular todos los valores (media, max, min, etc.)
+      notas.innerHTML = `
+      Total:  <br/>
+      Media: ${} <br/>
+      Máximo: ${calcularMax} <br/>
+      Mínimo: ${calcularMin} <br/>
+      Aprobados  <br/>
+      Suspensos  <br/>
+      `
+  }
   // TODO: construir un texto resumen y asignarlo a txtResumen.textContent
+
 }
 
 
@@ -201,6 +238,12 @@ function pintarResumen() {
  */
 function calcularMedia(array) {
   // TODO: sumar todos los elementos y dividir entre array.length
+  const media;
+  
+  for (let i = 0; i < array.length; i ++) {
+    let suma =+ array[i];
+    return suma / notas;
+  }
 }
 
 /**
@@ -210,6 +253,12 @@ function calcularMedia(array) {
  */
 function calcularMax(array) {
   // TODO: recorrer y guardar el máximo
+  for (let i = 0; i < array.length; i++) {
+    const max = array[i];
+    if (max > i) {
+      return;
+      }
+  }
 }
 
 /**
@@ -219,6 +268,12 @@ function calcularMax(array) {
  */
 function calcularMin(array) {
   // TODO: recorrer y guardar el mínimo
+  for (let i = 0; i < array.length; i++) {
+    const min = array[i];
+    if (min < i) {
+      return;
+    }
+  }
 }
 
 /**
