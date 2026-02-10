@@ -107,7 +107,14 @@ function agregarNota() {
 
   // TODO: leer el valor del input
   // TODO: convertirlo a número
-    const valorNum = Number(notaInput.value);
+  const valorStr = notaInput.value;
+  
+  if (valorStr === ""){
+    mostrarMensaje("ERROR: Debes introducir una nota");
+    return;
+  } 
+
+  const valorNum = Number(valorStr);
   // TODO: validar que sea un número válido y esté entre 0 y 10
     if (Number.isNaN(valorNum)){
       mostrarMensaje("ERROR: El dato que has introducido es inválido");
@@ -121,7 +128,7 @@ function agregarNota() {
       // TODO: si es correcto, hacer push al array "notas"
       notas.push(valorNum);
       // TODO: limpiar el input y devolver el foco al input
-      notaInput.value = "";
+      notaInput.value === "";
       notaInput.focus();
       // TODO: llamar a render()
       render();
@@ -210,16 +217,16 @@ function pintarLista() {
 function pintarResumen() {
   // TODO: si no hay notas, mostrar "Aún no hay notas."
   if (notas.length === 0) {
-    mostrarMensaje("Aún no hay notas");
+    txtResumen.innerHTML = ("Aún no hay notas");
     return;
   } else { // TODO: si hay notas, calcular todos los valores (media, max, min, etc.)
-      notas.innerHTML = `
-      Total:  <br/>
-      Media: ${} <br/>
-      Máximo: ${calcularMax} <br/>
-      Mínimo: ${calcularMin} <br/>
-      Aprobados  <br/>
-      Suspensos  <br/>
+      txtResumen.innerHTML = `
+      Total: ${notas.length} <br/>
+      Media: ${calcularMedia(notas)} <br/>
+      Máximo: ${calcularMax(notas)} <br/>
+      Mínimo: ${calcularMin(notas)} <br/>
+      Aprobados ${contarAprobados(notas)} <br/>
+      Suspensos ${notas.length - contarAprobados(notas)} <br/>
       `
   }
   // TODO: construir un texto resumen y asignarlo a txtResumen.textContent
@@ -238,12 +245,13 @@ function pintarResumen() {
  */
 function calcularMedia(array) {
   // TODO: sumar todos los elementos y dividir entre array.length
-  const media;
-  
+   let suma = 0;
+
   for (let i = 0; i < array.length; i ++) {
-    let suma =+ array[i];
-    return suma / notas;
+    suma += array[i];
   }
+
+  return suma / array.length;
 }
 
 /**
@@ -252,13 +260,15 @@ function calcularMedia(array) {
  * @returns {number} Valor máximo.
  */
 function calcularMax(array) {
+  let maxActual = array[0];
+
   // TODO: recorrer y guardar el máximo
-  for (let i = 0; i < array.length; i++) {
-    const max = array[i];
-    if (max > i) {
-      return;
-      }
+  for (let i = 1; i < array.length; i++) {
+    if (array[i] > maxActual) {
+      maxActual = array[i];
+    }
   }
+  return maxActual;
 }
 
 /**
@@ -267,13 +277,16 @@ function calcularMax(array) {
  * @returns {number} Valor mínimo.
  */
 function calcularMin(array) {
+  let minActual = array[0];
+
   // TODO: recorrer y guardar el mínimo
-  for (let i = 0; i < array.length; i++) {
+  for (let i = 1; i < array.length; i++) {
     const min = array[i];
-    if (min < i) {
-      return;
+    if (array[i] < minActual) {
+      minActual = min;
     }
   }
+  return minActual;
 }
 
 /**
@@ -283,6 +296,14 @@ function calcularMin(array) {
  */
 function contarAprobados(array) {
   // TODO: recorrer y contar >= 5
+  let contador = 0;
+  
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] >= 5) {
+      contador ++;
+    }
+  }
+  return contador;
 }
 
 
@@ -296,10 +317,21 @@ function contarAprobados(array) {
  * @param {string} texto Mensaje a mostrar.
  * @returns {void}
  */
+
+let timeoutMensajeId = null;
+
 function mostrarMensaje(texto) {
   // TODO: mostrar texto
-  // TODO: programar que se borre después de X ms con setTimeout
+  mensaje.textContent = texto;
   // TODO (opcional): si llega otro error antes de borrarse, evitar solapes
+  if (timeoutMensajeId !==null) {
+    clearTimeout(timeoutMensajeId);
+  }
+  // TODO: programar que se borre después de X ms con setTimeout
+  timeoutMensajeId = setTimeout(() => {
+    limpiarMensaje();
+    timeoutMensajeId = null;
+  }, 3000);
 }
 
 /**
@@ -307,5 +339,5 @@ function mostrarMensaje(texto) {
  * @returns {void}
  */
 function limpiarMensaje() {
-
+  mensaje.textContent = "";
 }
